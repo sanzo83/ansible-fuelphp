@@ -1,0 +1,26 @@
+# mariaDB設定
+mariadb:
+    db_passwd_root: 
+
+#php5.6設定
+php_5_6:
+  # php 提供元レポジトリURL
+  repo_url: http://rpms.famillecollet.com/enterprise/remi-release-7.rpm
+  # 利用レポジトリ
+  enablerepo: remi-php56
+  
+  # php 設定ファイル
+  config_path: /etc/php.ini
+
+#fuelphp設定
+fuelphp:
+  # ダウンロードURL
+  download_url: http://fuelphp.com/files/download/36
+  # ダウンロードするバージョンのフォルダ名
+  download_ver_dir_name: fuelphp-1.8
+  # プロジェクト名
+  project_name: fuelphp
+  # 環境変数設定（開発環境、テスト環境、本番環境等）
+  env: development
+
+    

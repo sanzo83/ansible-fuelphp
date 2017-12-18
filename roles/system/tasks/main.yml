@@ -1,0 +1,25 @@
+- name: SELinuxの状態確認
+  command:
+    /usr/sbin/selinuxenabled
+  register:
+    result
+  changed_when: false
+  failed_when: result.rc not in [0, 1]
+
+- name: 起動時にSELinux無効化 (/etc/sysconfig/selinux)
+  sudo: yes
+  selinux: state=disabled
+  when: result.rc == 0
+
+- name: SELinux無効化 (setenforce)
+  sudo: yes
+  command: setenforce 0
+  when: result.rc == 0
+
+- name: firewalld起動確認
+  sudo: yes
+  systemd: name=firewalld state=started enabled=yes
+
+- name: firewalldでHTTPを許可
+  sudo: yes
+  firewalld: service=http permanent=true state=enabled immediate=true

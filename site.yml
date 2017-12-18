@@ -1,0 +1,15 @@
+- hosts: fuelphp-servers
+  become: yes
+
+  roles:
+    - role: system
+      tags: system
+    - role: mariadb
+    - role: apache
+    - role: php
+    - role: fuelphp
+
+  post_tasks:
+    - name: 完了
+      debug:
+        msg='インストールが完了しました。'  

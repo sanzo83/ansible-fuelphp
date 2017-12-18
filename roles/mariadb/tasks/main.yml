@@ -1,0 +1,49 @@
+# mariaDBインストール
+- name: Install mariadb
+  yum:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - mariadb-server
+    - mariadb
+
+# MySQL関連モジュールを使うためにインストール
+- name: install MySQL-python
+  yum: name=MySQL-python state=installed
+
+- name: 文字コード設定
+  sudo: yes
+  template: src=character_set.cnf.j2 dest=/etc/my.cnf.d/character_set.cnf owner=root group=root mode=0644
+
+- name: run mariadb-server
+  service: name=mariadb state=started enabled=yes
+
+- name: 匿名ユーザー削除
+  mysql_user:
+    name=''
+    state=absent
+  register:
+    result
+  ignore_errors: true
+
+- name: リモートからのrootログインを禁止
+  mysql_user:
+    name=root
+    host={{ ansible_fqdn }}
+    state=absent
+
+- name: testデータベース 削除
+  mysql_db:
+    name=test
+    state=absent
+
+- name: rootパスワード設定
+  mysql_user:
+    name=root
+    host={{ item }}
+    password={{ mariadb.db_passwd_root }}
+  with_items:
+    - 127.0.0.1
+    - ::1
+    - localhost
+

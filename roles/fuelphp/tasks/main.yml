@@ -1,0 +1,66 @@
+# fuelphpインストール
+
+- name: 必要なモジュールインストール
+  yum:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - unzip
+    - wget
+
+- name: fuelphpダウンロード
+  get_url: url="{{fuelphp.download_url}}" dest=/tmp/{{fuelphp.project_name}}.zip
+
+
+- name: fuelphpの展開
+  unarchive: src=/tmp/{{fuelphp.project_name}}.zip dest=/var/www/html/ copy=no
+
+- name: 展開フォルダの存在確認
+  stat: path=/var/www/html/{{ fuelphp.download_ver_dir_name }}
+  register: archivefolder_stat
+
+- name: プロジェクトフォルダの存在確認
+  stat: path=/var/www/html/{{ fuelphp.project_name }}
+  register: projectfolder_stat
+
+- name: お知らせ
+  debug: msg="すでにプロジェクトフォルダが存在します"
+  when: projectfolder_stat.stat.exists
+
+- name: プロジェクトフォルダへフォルダ名変更
+  command: mv /var/www/html/{{ fuelphp.download_ver_dir_name }} /var/www/html/{{ fuelphp.project_name }}
+  when: 
+    - archivefolder_stat.stat.exists
+    - not projectfolder_stat.stat.exists
+
+- name: 展開フォルダを削除
+  file: path=/var/www/html/{{ fuelphp.download_ver_dir_name }} state=absent
+  when: 
+    - archivefolder_stat.stat.exists
+
+- name: configファイルの設定変更
+  replace: 
+    dest: /var/www/html/{{ fuelphp.project_name }}/fuel/app/config/config.php
+    regexp: "// 'language'.*=>.*'en'"
+    replace: "\t'language' => 'ja'"
+
+- name: configファイルの設定変更
+  lineinfile:
+    dest: /var/www/html/{{ fuelphp.project_name }}/fuel/app/config/config.php
+    backrefs: yes
+    regexp: '{{ item.regexp}}'
+    line: '{{ item.line }}'
+  with_items: 
+    - regexp: "// 'language'.*=>.*'en',"
+      line: "\t'language' => 'ja',"
+    - regexp: "// 'locale'.*=>.*'en_US',"
+      line: "\t'locale' => 'ja_JP.UTF-8',"
+    - regexp: "// 'default_timezone'.*=> null,"
+      line: "\t'default_timezone' => 'Asia/Tokyo',"
+    
+
+
+
+
+  
+  

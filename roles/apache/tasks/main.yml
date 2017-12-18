@@ -1,0 +1,16 @@
+# apacheインストール
+- name: Install httpd
+  yum:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - httpd
+
+- name: run httpd
+  service: name=httpd state=started enabled=yes
+
+- name: virtualhost設定
+  sudo: yes
+  template: src=vhosts.conf.j2 dest=/etc/httpd/conf.d/vhosts.conf owner=root group=root mode=0644
+  notify:
+    - restart httpd

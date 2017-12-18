@@ -1,0 +1,44 @@
+# php_5.6インストール
+
+- name: remi レポジトリのインストール
+  yum:
+    name: "{{ php_5_6.repo_url }}"
+    state: present
+
+- name: php のインストール
+  yum:
+    name: "{{ item }}"
+    enablerepo: "{{ php_5_6.enablerepo }}"
+    state: present
+  with_items:
+    - php
+    - php-cli
+    - php-common
+    - php-dbg
+    - php-devel
+    - php-gd
+    - php-mbstring
+    - php-mcrypt
+    - php-mysqlnd
+    - php-opcache
+    - php-xml
+
+- name: php 設定ファイル編集
+  lineinfile:
+    dest: "{{ php_5_6.config_path }}"
+    backrefs: yes
+    regexp: '{{ item.regexp}}'
+    line: '{{ item.line }}'
+  with_items: 
+    - regexp: '^;(date.timezone) =.*'
+      line: '\1 = Asia/Tokyo'
+    - regexp: '^;(mbstring.language) =.*'
+      line: '\1 = Japanese'
+    - regexp: '^;(mbstring.internal_encoding) =.*'
+      line: '\1 = UTF-8'
+    - regexp: '^;(mbstring.http_input) =.*'
+      line: '\1 = pass'
+    - regexp: '^;(mbstring.http_output) =.*'
+      line: '\1 = pass'
+    - regexp: '^;(mbstring.encoding_translation) =.*'
+      line: '\1 = off'

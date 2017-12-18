@@ -1,0 +1,12 @@
+NameVirtualHost *:80
+<VirtualHost *:80>
+    DocumentRoot /var/www/html/{{fuelphp.project_name}}/public
+    ErrorLog logs/fuelphp_error.log
+    CustomLog logs/fuelphp_access.log combined
+    SetEnv FUEL_ENV {{fuelphp.env}}
+    <Directory /var/www/html/{{fuelphp.project_name}}/public>
+        DirectoryIndex index.php
+        AllOwoverride All
+        Require all granted
+    </Directory>
+</VirtualHost>
