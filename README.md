@@ -36,7 +36,7 @@ group_vars下のallファイルに設定項目が書かれていますので、�
 下記コマンドを実行してください。fuelの自動インストールが開始されます。
 
 ```
-cd fuelphp-centos7-mariadb-ansible
+cd ansible-fuelphp-mariadb
 ansible-playbook -i hosts site.yml
 ```
 
