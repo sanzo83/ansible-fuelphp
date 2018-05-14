@@ -1,13 +1,27 @@
+# mongoDB設定
+mongodb:
+  # epelレポジトリURL
+  repo_url_centos7: https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+  repo_url_centos6: https://dl.fedoraproject.org/pub/epel/epel-release-latest-6.noarch.rpm
+  
+  
 # mariaDB設定
 mariadb:
-    db_passwd_root: 
+  db_passwd_root:
+
+# mysql設定
+mysql:
+  db_passwd_root: root
+  defaults_file: /root/.my.cnf
+
 
 #php5.6設定
 php_5_6:
   # php 提供元レポジトリURL
-  repo_url: http://rpms.famillecollet.com/enterprise/remi-release-7.rpm
+  repo_url_centos7: http://rpms.famillecollet.com/enterprise/remi-release-7.rpm
+  repo_url_centos6: http://rpms.famillecollet.com/enterprise/remi-release-6.rpm
   # 利用レポジトリ
-  enablerepo: remi-php56
+  enablerepo: epel,remi,remi-php56
   
   # php 設定ファイル
   config_path: /etc/php.ini

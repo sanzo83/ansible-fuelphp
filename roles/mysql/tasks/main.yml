@@ -1,0 +1,51 @@
+# myslqインストール
+- name:  レポジトリの登録
+  yum:
+    name: http://dev.mysql.com/get/mysql57-community-release-el6-7.noarch.rpm
+    state: present
+
+- name: mysqld のインストール
+  yum:
+    name: "{{ item }}"
+    enablerepo: mysql56-community
+    disablerepo: mysql57-community
+    state: present
+  with_items:
+    - mysql-community-server
+    - mysql-community-client
+    - mysql-community-common
+    - mysql-community-libs
+    - mysql-community-libs-compat
+
+# MySQL関連モジュールを使うためにインストール
+- name: install MySQL-python/libselinux-python/yum-utils
+  yum: name="{{ item }}" state=present
+  with_items:
+      - MySQL-python
+      - libselinux-python
+      - yum-utils
+
+- name: 設定ファイル
+  sudo: yes
+  template: src=my.cnf.j2 dest=/etc/my.cnf owner=root group=root mode=0644
+
+- name: ログイン用設定ファイル
+  template: src=.my.cnf.j2 dest=/root/.my.cnf owner=root group=root mode=0600
+
+- name: mysqld 起動・自動起動設定
+  service:
+    name=mysqld
+    state=started
+    enabled=yes
+
+- name: root ユーザのパスワード変更
+  mysql_user: name=root password={{ mysql.db_passwd_root }} host_all=yes check_implicit_admin=yes
+
+- name: anonymous ユーザの削除
+  mysql_user:
+    name: ""
+    host: "{{ item }}"
+    state: absent
+  with_items:
+    - localhost.localdomain
+    - localhost

@@ -5,6 +5,13 @@
     - role: system
       tags: system
     - role: mariadb
+      tags: mariadb
+      when: (ansible_distribution == "CentOS" and ansible_distribution_major_version == "7")
+    - role: mysql
+      tags: mysql
+      when: (ansible_distribution == "CentOS" and ansible_distribution_major_version == "6")
+    - role: mongodb
+      tags: mongodb
     - role: apache
     - role: php
     - role: fuelphp
@@ -12,4 +19,4 @@
   post_tasks:
     - name: 完了
       debug:
-        msg='インストールが完了しました。'  
+        msg='インストールが完了しました。'

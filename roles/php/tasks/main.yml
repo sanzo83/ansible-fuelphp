@@ -1,9 +1,15 @@
 # php_5.6インストール
-
-- name: remi レポジトリのインストール
+- name: remi レポジトリのインストール CentOS7
   yum:
-    name: "{{ php_5_6.repo_url }}"
+    name: "{{ php_5_6.repo_url_centos7 }}"
     state: present
+  when: (ansible_distribution == "CentOS" and ansible_distribution_major_version == "7")
+
+- name: remi レポジトリのインストール CentOS6
+  yum:
+    name: "{{ php_5_6.repo_url_centos6 }}"
+    state: present
+  when: (ansible_distribution == "CentOS" and ansible_distribution_major_version == "6")
 
 - name: php のインストール
   yum:
@@ -22,6 +28,8 @@
     - php-mysqlnd
     - php-opcache
     - php-xml
+    - php-pear
+    - php-mongo
 
 - name: php 設定ファイル編集
   lineinfile:
@@ -29,7 +37,7 @@
     backrefs: yes
     regexp: '{{ item.regexp}}'
     line: '{{ item.line }}'
-  with_items: 
+  with_items:
     - regexp: '^;(date.timezone) =.*'
       line: '\1 = Asia/Tokyo'
     - regexp: '^;(mbstring.language) =.*'
@@ -42,3 +50,11 @@
       line: '\1 = pass'
     - regexp: '^;(mbstring.encoding_translation) =.*'
       line: '\1 = off'
+- name: phpinfo 末尾にMongoDB複数行追記
+  lineinfile:
+    dest: '{{ php_5_6.config_path }}'
+    line: '{{ item }}'
+  with_items:
+    - '[MongoDB]'
+    - 'extension=mongo.so'
+    - 'extension=/usr/lib64/php/modules/mongo.so'

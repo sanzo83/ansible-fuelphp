@@ -1,0 +1,27 @@
+#MongoDBインストール
+- name: epel レポジトリのインストール CentOS7
+  yum:
+    name: "{{ mongodb.repo_url_centos7 }}"
+    state: present
+  when: (ansible_distribution == "CentOS" and ansible_distribution_major_version == "7")
+
+- name: epel レポジトリのインストール CentOS6
+  yum:
+    name: "{{ mongodb.repo_url_centos6 }}"
+    state: present
+  when: (ansible_distribution == "CentOS" and ansible_distribution_major_version == "6")
+  
+
+- name: "Install MongoDB"
+  yum:
+    name: "{{ item }}"
+    enablerepo: "epel"
+    state: latest
+  with_items:
+    - mongodb-server
+    - mongodb
+  tags:
+    - mongodb
+    - pkgs
+  notify:
+    - restart mongodb

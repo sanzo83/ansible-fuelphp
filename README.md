@@ -7,25 +7,45 @@
 selinux無効化、firewalldの80番ポートを開放します。
 
 
-## システム構成
+## システム構成(CentOS7の場合)
 
 * fuelphp 1.8
-* CentOS 7
 * PHP 5.6
+* MongoDB 2.4
 * MariaDB 5.5
 * Apache 2.4
 
+## システム構成(CentOS6の場合)
+
+* fuelphp 1.8
+* PHP 5.6
+* MongoDB 2.4
+* mysql 5.6
+* Apache 2.2  
 
 ## インストール手順
 
-インストール直後の CentOS 7 に root でログインし以下の操作を行ってください。
-
+インストール直後の CentOS に root でログインし以下の操作を行ってください。
 
 ### Ansibleのインストール
 
 ```
 yum install -y ansible 
 ```
+
+### CentOS6の場合はAnsibleを標準で入れられないため、epelでインストールします
+
+```
+yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-6.noarch.rpm
+yum install -y ansible 
+sudo vi /etc/yum.repos.d/epel.repo
+----------
+[epel]
+-中略-
+enabled=1 ※enabled=0に変える
+----------
+```
+
 
 ### パスワード、設定項目等
 
